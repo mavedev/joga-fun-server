@@ -1,12 +1,18 @@
 from typing import Dict
+import os
 
 
 class Config:
-    pass
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    SQLALCHEMY_DATABASE_URI = (
+        os.getenv('DEV_DB_URL')
+        or 'postgresql://postgres:{password}@localhost/Customers'
+        .format(password=os.getenv('DEV_DB_PASS') or '')
+    )
 
 
 class TestingConfig(Config):
