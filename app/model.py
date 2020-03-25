@@ -48,7 +48,7 @@ class User(db.Model):  # type: ignore
     roles = db.relationship(
         'Role',
         secondary=roles_users,
-        backref=db.backref('users')
+        backref=db.backref('users', lazy='dynamic')
     )
 
     def set_password(self, password) -> None:
