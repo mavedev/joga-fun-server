@@ -22,6 +22,32 @@ roles_users = db.Table(
 )
 
 
+class Post(db.Model):  # type: ignore
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer(), primary_key=True)
+    title = db.Column(db.String(_TEXT_LEN_MID))
+    body = db.Column(db.Text)
+    created = db.Column(db.DateTime, default=datetime.now)
+
+    def __repr__(self) -> str:
+        return '<Post {}>'.format(self.title)
+
+    def to_json(self) -> Dict[str, Any]:
+        return {
+            'title': self.title,
+            'body': self.body,
+            'created': self.created
+        }
+
+
+class Comment(db.Model):  # type: ignore
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer(), primary_key=True)
+    author = db.Column(db.String(_TEXT_LEN_MID), nullable=False)
+    email = db.Column(db.String(_TEXT_LEN_MAX), nullable=False)
+    site = db.Column(db.String(_TEXT_LEN_MAX))
+
+
 class Role(db.Model, RoleMixin):  # type: ignore
     __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
@@ -59,29 +85,3 @@ class User(db.Model):  # type: ignore
 
     def __repr__(self) -> str:
         return "<{}:{}>".format(self.id, self.username)
-
-
-class Post(db.Model):  # type: ignore
-    __tablename__ = 'posts'
-    id = db.Column(db.Integer(), primary_key=True)
-    title = db.Column(db.String(_TEXT_LEN_MID))
-    body = db.Column(db.Text)
-    created = db.Column(db.DateTime, default=datetime.now)
-
-    def __repr__(self) -> str:
-        return '<Post {}>'.format(self.title)
-
-    def to_json(self) -> Dict[str, Any]:
-        return {
-            'title': self.title,
-            'body': self.body,
-            'created': self.created
-        }
-
-
-class Comment(db.Model):  # type: ignore
-    __tablename__ = 'comments'
-    id = db.Column(db.Integer(), primary_key=True)
-    author = db.Column(db.String(_TEXT_LEN_MID), nullable=False)
-    email = db.Column(db.String(_TEXT_LEN_MAX), nullable=False)
-    site = db.Column(db.String(_TEXT_LEN_MAX))
