@@ -10,7 +10,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = (
         os.getenv('DEV_DB_URL')
-        or 'postgresql://postgres:{password}@localhost/Customers'
+        or 'postgresql+psycopg2://postgres:{password}@localhost/Customers'
         .format(password=os.getenv('DEV_DB_PASS') or '')
     )
 
