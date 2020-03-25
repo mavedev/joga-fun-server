@@ -1,3 +1,4 @@
+from typing import Dict, Any
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
@@ -69,6 +70,13 @@ class Post(db.Model):  # type: ignore
 
     def __repr__(self) -> str:
         return '<Post {}>'.format(self.title)
+
+    def to_json(self) -> Dict[str, Any]:
+        return {
+            'title': self.title,
+            'body': self.body,
+            'created': self.created
+        }
 
 
 class Comment(db.Model):  # type: ignore
