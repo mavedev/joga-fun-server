@@ -2,6 +2,10 @@ from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import RoleMixin
+from werkzeug.security import (
+    generate_password_hash,
+    check_password_hash
+)
 
 db = SQLAlchemy()
 roles_users = db.Table(
@@ -17,7 +21,7 @@ class Role(db.Model, RoleMixin):  # type: ignore
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<Role {}>'.format(self.name)
 
 
@@ -35,7 +39,13 @@ class User(db.Model):  # type: ignore
         onupdate=datetime.utcnow
     )
 
-    def __repr__(self):
+    def set_password(self, password) -> None:
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password) -> bool:
+        return check_password_hash(self.password_hash, password)
+
+    def __repr__(self) -> str:
         return "<{}:{}>".format(self.id, self.username)
 
 
