@@ -67,9 +67,6 @@ class Post(db.Model):  # type: ignore
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now())
 
-    def __init__(self, *args, **kwargs) -> None:
-        super(Post, self).__init__(*args, **kwargs)
-
     def __repr__(self) -> str:
         return '<Post {}>'.format(self.title)
 
