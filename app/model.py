@@ -7,6 +7,12 @@ from werkzeug.security import (
     check_password_hash
 )
 
+from .constants import (
+    _TEXT_LEN_MAX,
+    _TEXT_LEN_MID,
+    _TEXT_LEN_MIN
+)
+
 db = SQLAlchemy()
 roles_users = db.Table(
     'roles_users',
@@ -18,8 +24,8 @@ roles_users = db.Table(
 class Role(db.Model, RoleMixin):  # type: ignore
     __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(80), unique=True)
-    description = db.Column(db.String(255))
+    name = db.Column(db.String(_TEXT_LEN_MIN), unique=True)
+    description = db.Column(db.String(_TEXT_LEN_MAX))
 
     def __repr__(self) -> str:
         return '<Role {}>'.format(self.name)
@@ -28,10 +34,10 @@ class Role(db.Model, RoleMixin):  # type: ignore
 class User(db.Model):  # type: ignore
     __tablename__ = 'users'
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(100))
-    username = db.Column(db.String(50), nullable=False, unique=True)
-    email = db.Column(db.String(100), nullable=False, unique=True)
-    password_hash = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(_TEXT_LEN_MID))
+    username = db.Column(db.String(_TEXT_LEN_MIN), nullable=False, unique=True)
+    email = db.Column(db.String(_TEXT_LEN_MID), nullable=False, unique=True)
+    password_hash = db.Column(db.String(_TEXT_LEN_MID), nullable=False)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(
         db.DateTime(),
@@ -52,7 +58,7 @@ class User(db.Model):  # type: ignore
 class Post(db.Model):  # type: ignore
     __tablename__ = 'posts'
     id = db.Column(db.Integer(), primary_key=True)
-    title = db.Column(db.String(140))
+    title = db.Column(db.String(_TEXT_LEN_MID))
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now())
 
@@ -61,3 +67,11 @@ class Post(db.Model):  # type: ignore
 
     def __repr__(self) -> str:
         return '<Post {}>'.format(self.title)
+
+
+class Comment(db.Model):  # type: ignore
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer(), primary_key=True)
+    author = db.Column(db.String(_TEXT_LEN_MID), nullable=False)
+    email = db.Column(db.String(_TEXT_LEN_MAX), nullable=False)
+    site = db.Column(db.String(_TEXT_LEN_MAX))
