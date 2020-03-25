@@ -44,6 +44,11 @@ class User(db.Model):  # type: ignore
         default=datetime.utcnow,
         onupdate=datetime.utcnow
     )
+    roles = db.relationship(
+        'Role',
+        secondary=roles_users,
+        backref=db.backref('users')
+    )
 
     def set_password(self, password) -> None:
         self.password_hash = generate_password_hash(password)
