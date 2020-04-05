@@ -34,3 +34,21 @@ def update_post(title: str, body: str) -> bool:
             return True
         except SQLAlchemyError:
             return False
+
+
+def delete_post(title: str) -> bool:
+    target_post: Post = (
+        db.session.query(Post)
+        .filter(Post.title == title)
+        .first()
+    )
+
+    if not target_post:
+        return False
+    else:
+        try:
+            db.session.delete(target_post)
+            db.session.commit()
+            return True
+        except SQLAlchemyError:
+            return False

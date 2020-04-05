@@ -28,3 +28,11 @@ def update_post() -> str:
         body=request['body']
     )
     return Response(status=200 if result else 500)
+
+
+@api.route('/posts/delete', methods=['DELETE'])
+def delete_post() -> str:
+    result: bool = posts.delete_post(
+        title=request['title']
+    )
+    return Response(status=200 if result else 500)
