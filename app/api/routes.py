@@ -12,9 +12,18 @@ def read_posts(how_many: int) -> str:
     ])
 
 
-@api.route('posts/create', methods=['POST'])
+@api.route('/posts/create', methods=['POST'])
 def create_post() -> str:
     result: bool = posts.create_post(
+        title=request['title'],
+        body=request['body']
+    )
+    return Response(status=200 if result else 500)
+
+
+@api.route('/posts/update', methods=['POST'])
+def update_post() -> str:
+    result: bool = posts.update_post(
         title=request['title'],
         body=request['body']
     )
