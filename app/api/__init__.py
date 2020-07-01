@@ -2,4 +2,4 @@ from flask import Blueprint
 
 api = Blueprint('api', __name__)
 
-from .logic import posts  # noqa
+from . import routes  # noqa

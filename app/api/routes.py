@@ -1,7 +1,9 @@
 from flask import jsonify, request, Response
 
+from app.constants import JSONLike
+
 from . import api
-from . import posts
+from .logic import posts
 
 
 @api.route('/posts/<int:how_many>')
@@ -13,26 +15,29 @@ def read_posts(how_many: int) -> str:
 
 
 @api.route('/posts/create', methods=['POST'])
-def create_post() -> str:
+def create_post() -> Response:
+    body: JSONLike = request.json
     result: bool = posts.create_post(
-        title=request['title'],
-        body=request['body']
+        title=body['title'],
+        body=body['body']
     )
     return Response(status=200 if result else 500)
 
 
 @api.route('/posts/update', methods=['POST'])
-def update_post() -> str:
+def update_post() -> Response:
+    body: JSONLike = request.json
     result: bool = posts.update_post(
-        title=request['title'],
-        body=request['body']
+        title=body['title'],
+        body=body['body']
     )
     return Response(status=200 if result else 500)
 
 
 @api.route('/posts/delete', methods=['DELETE'])
-def delete_post() -> str:
+def delete_post() -> Response:
+    body: JSONLike = request.json
     result: bool = posts.delete_post(
-        title=request['title']
+        title=body['title']
     )
     return Response(status=200 if result else 500)
