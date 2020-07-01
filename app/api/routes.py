@@ -6,7 +6,7 @@ from . import api
 from .logic import posts
 
 
-@api.route('/posts/<int:how_many>')
+@api.route('/posts/<int:how_many>', methods=['GET'])
 def read_posts(how_many: int) -> str:
     return jsonify(results=[
         post.to_json() for post in
@@ -24,7 +24,7 @@ def create_post() -> Response:
     return Response(status=200 if result else 500)
 
 
-@api.route('/posts/update', methods=['POST'])
+@api.route('/posts/update', methods=['PUT'])
 def update_post() -> Response:
     body: JSONLike = request.json
     result: bool = posts.update_post(
