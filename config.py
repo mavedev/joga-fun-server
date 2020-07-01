@@ -11,7 +11,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = (
         os.getenv('DB_URL_DEV')
-        or 'postgresql+psycopg2://postgres:{password}@localhost/joga_dev'
+        or 'postgresql+psycopg2://jogafun:{password}@localhost/joga_dev'
         .format(password=os.getenv('DB_PASS_DEV') or '')
     )
 
@@ -20,7 +20,7 @@ class TestingConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = (
         os.getenv('DB_URL_TEST')
-        or 'postgresql+psycopg2://postgres:{password}@localhost/joga_test'
+        or 'postgresql+psycopg2://jogafun:{password}@localhost/joga_test'
         .format(password=os.getenv('DB_PASS_TEST') or '')
     )
 
@@ -29,7 +29,7 @@ class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = (
         os.getenv('DB_URL_PROD')
-        or 'postgresql+psycopg2://postgres:{password}@localhost/joga_prod'
+        or 'postgresql+psycopg2://jogafun:{password}@localhost/joga_prod'
         .format(password=os.getenv('DB_PASS_PROD') or '')
     )
 
