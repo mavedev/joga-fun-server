@@ -4,7 +4,7 @@ from flask_login import login_required
 from app.constants import JSONLike
 
 from . import api
-from .logic import posts
+from .logic import posts, auth
 
 
 @api.route('/posts/<int:how_many>', methods=['GET'])
@@ -45,3 +45,13 @@ def delete_post() -> Response:
         title=body['title']
     )
     return Response(status=200 if result else 500)
+
+
+@api.route('/auth/admin', methods=['POST'])
+def administrate() -> Response:
+    body: JSONLike = request.json
+    result: bool = auth.can_administrate(
+        body['username'],
+        body['password']
+    )
+    return Response(status=200 if result else 401)
