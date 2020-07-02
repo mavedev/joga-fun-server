@@ -41,6 +41,7 @@ def main() -> None:
     def automanage():
         # Comment-like type annotation to avoid manager bugs.
         # type: () -> None
+        db.drop_all()
         db.create_all()
         datastore.create_user(username='admin')
         datastore.create_role(
@@ -59,10 +60,6 @@ def main() -> None:
         db.session.commit()
 
     manager.run()
-
-
-def automanage() -> None:
-    pass
 
 
 if __name__ == '__main__':
