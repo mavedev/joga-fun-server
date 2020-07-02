@@ -63,10 +63,13 @@ class Role(db.Model, RoleMixin):  # type: ignore
 class User(db.Model, UserMixin):  # type: ignore
     __tablename__ = 'users'
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(_TEXT_LEN_MID))
     username = db.Column(db.String(_TEXT_LEN_MIN), nullable=False, unique=True)
-    email = db.Column(db.String(_TEXT_LEN_MID), nullable=False, unique=True)
-    password_hash = db.Column(db.String(_TEXT_LEN_MID), nullable=False)
+    password_hash = db.Column(
+        db.String(_TEXT_LEN_MID),
+        nullable=False,
+        default=''
+    )
+    active = db.Column(db.Boolean())
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(
         db.DateTime(),

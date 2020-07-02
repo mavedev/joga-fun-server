@@ -42,13 +42,10 @@ def main() -> None:
         # Comment-like type annotation to avoid manager bugs.
         # type: () -> None
         db.create_all()
+        datastore.create_user(username='admin')
         datastore.create_role(
             name='admin',
             description='Site administrator'
-        )
-        datastore.create_user(
-            name='Administrator',
-            username='admin'
         )
         admin_user: User = User.query.first()
         admin_role: Role = Role.query.first()
