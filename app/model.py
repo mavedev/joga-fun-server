@@ -2,7 +2,7 @@ from typing import Dict, Any
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import RoleMixin
+from flask_security import RoleMixin, UserMixin
 from werkzeug.security import (
     generate_password_hash,
     check_password_hash
@@ -58,7 +58,7 @@ class Role(db.Model, RoleMixin):  # type: ignore
         return '<Role {}>'.format(self.name)
 
 
-class User(db.Model):  # type: ignore
+class User(db.Model, UserMixin):  # type: ignore
     __tablename__ = 'users'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(_TEXT_LEN_MID))
