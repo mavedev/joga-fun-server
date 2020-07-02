@@ -53,6 +53,12 @@ def main() -> None:
         admin_user: User = User.query.first()
         admin_role: Role = Role.query.first()
         datastore.add_role_to_user(admin_user, admin_role)
+
+        password = ''
+        while not password:
+            password = input('Enter password for admin: ')
+        admin_user.set_password(password)
+
         db.session.commit()
 
     manager.run()
