@@ -1,7 +1,7 @@
 from flask import jsonify, request, Response
 from flask_login import login_required
 
-from app.constants import JSONLike
+from app.constants import JSONLike, AuthHeader
 
 from . import api
 from .logic import posts, auth
@@ -49,7 +49,10 @@ def delete_post() -> Response:
 
 @api.route('/auth/admin', methods=['POST'])
 def administrate() -> Response:
-    body: JSONLike = request.json
+    body: AuthHeader = request.authorization or {
+        'username': '',
+        'password': ''
+    }
     result: bool = auth.can_administrate(
         body['username'],
         body['password']
