@@ -37,7 +37,29 @@ def main() -> None:
     def load_user(user_id: int) -> User:
         return db.session.query(User).get(user_id)
 
+    @manager.command
+    def automanage():
+        # Comment-like type annotation to avoid manager bugs.
+        # type: () -> None
+        db.create_all()
+        datastore.create_role(
+            name='admin',
+            description='Site administrator'
+        )
+        datastore.create_user(
+            name='Administrator',
+            username='admin'
+        )
+        admin_user: User = User.query.first()
+        admin_role: Role = Role.query.first()
+        datastore.add_role_to_user(admin_user, admin_role)
+        db.session.commit()
+
     manager.run()
+
+
+def automanage() -> None:
+    pass
 
 
 if __name__ == '__main__':
