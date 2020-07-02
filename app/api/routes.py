@@ -1,4 +1,5 @@
 from flask import jsonify, request, Response
+from flask_login import login_required
 
 from app.constants import JSONLike
 
@@ -15,6 +16,7 @@ def read_posts(how_many: int) -> str:
 
 
 @api.route('/posts/create', methods=['POST'])
+@login_required
 def create_post() -> Response:
     body: JSONLike = request.json
     result: bool = posts.create_post(
@@ -25,6 +27,7 @@ def create_post() -> Response:
 
 
 @api.route('/posts/update', methods=['PUT'])
+@login_required
 def update_post() -> Response:
     body: JSONLike = request.json
     result: bool = posts.update_post(
@@ -35,6 +38,7 @@ def update_post() -> Response:
 
 
 @api.route('/posts/delete', methods=['DELETE'])
+@login_required
 def delete_post() -> Response:
     body: JSONLike = request.json
     result: bool = posts.delete_post(
