@@ -25,6 +25,7 @@ def main() -> None:
             'app': app,
             'User': User,
             'Post': Post,
+            'Role': Role,
             'manager': manager,
             'migrate': migrate,
             'security': security,
