@@ -3,7 +3,6 @@ from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import RoleMixin, UserMixin
-from flask_login import login_manager
 from werkzeug.security import (
     generate_password_hash,
     check_password_hash
@@ -16,11 +15,6 @@ from .constants import (
 )
 
 db = SQLAlchemy()
-
-
-@login_manager.user_loader
-def load_user(user_id: int) -> 'User':
-    return db.session.query(User).get(user_id)
 
 
 roles_users = db.Table(
