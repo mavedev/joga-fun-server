@@ -1,12 +1,40 @@
-from flask import jsonify, request, Response, make_response
+from typing import Callable
+
+from flask import jsonify, request, Response, make_response, current_app
 from flask_login import login_required
 from http import HTTPStatus
+
+from jwt.exceptions import DecodeError
+from jwt import decode
 
 from app.constants import JSONLike, AuthHeader
 from app.model import User
 
 from . import api
 from .logic import posts, auth
+
+
+def token_required(wrapped_func: Callable) -> Callable:
+    def get_wrapped(*args, **kwargs) -> Callable:
+        token: bytes = b''
+        if 'x-access-token' not in request.headers:
+            return make_response(
+                'Need authorization',
+                HTTPStatus.UNAUTHORIZED,
+                {'WWW-Authenticate': 'Basic realm="Login Required"'}
+            )
+        try:
+            token = request.headers['x-access-token']
+            data = decode(token, current_app.config['SECRET_KEY'])
+            current_user = User.query.filter_by(id=data['id']).first()
+            return wrapped_func(current_user, *args, **kwargs)
+        except DecodeError:
+            return make_response(
+                'Bad token',
+                HTTPStatus.BAD_REQUEST,
+                {'WWW-Authenticate': 'Basic realm="Login Required"'}
+            )
+    return get_wrapped
 
 
 @api.route('/posts/<int:how_many>', methods=['GET'])
