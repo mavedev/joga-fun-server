@@ -7,6 +7,7 @@ from flask import (
     request,
     jsonify
 )
+from functools import wraps
 from http import HTTPStatus
 
 from jwt.exceptions import DecodeError
@@ -20,6 +21,7 @@ from .logic import posts, auth
 
 
 def token_required(wrapped_func: Callable) -> Callable:
+    @wraps(wrapped_func)
     def get_wrapped(*args, **kwargs) -> Callable:
         token: bytes = b''
         if 'x-access-token' not in request.headers:
@@ -31,7 +33,7 @@ def token_required(wrapped_func: Callable) -> Callable:
         try:
             token = request.headers['x-access-token']
             data = decode(token, current_app.config['SECRET_KEY'])
-            current_user = User.query.filter_by(id=data['id']).first()
+            current_user = User.query.filter_by(id=data['user_id']).first()
             return wrapped_func(current_user, *args, **kwargs)
         except DecodeError:
             return make_response(
