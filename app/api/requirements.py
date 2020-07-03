@@ -16,6 +16,10 @@ from app.model import User
 
 
 def token_required(*, of: str) -> Callable:
+    """A decorator requiering the JSON access token.
+       Args:
+           of (str): of which role the token must be.
+    """
     def get_outer(wrapped_func: Callable) -> Callable:
         @wraps(wrapped_func)
         def get_wrapped(*args, **kwargs) -> Callable:
@@ -30,7 +34,14 @@ def token_required(*, of: str) -> Callable:
                 token = request.headers['x-access-token']
                 data = decode(token, current_app.config['SECRET_KEY'])
                 current_user = User.query.filter_by(id=data['user_id']).first()
-                return wrapped_func(current_user, *args, **kwargs)
+                if _check_role(of, current_user):
+                    return wrapped_func(current_user, *args, **kwargs)
+                else:
+                    return make_response(
+                        'Permission denied',
+                        HTTPStatus.FORBIDDEN,
+                        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+                    )
             except DecodeError:
                 return make_response(
                     'Bad token',
@@ -39,3 +50,7 @@ def token_required(*, of: str) -> Callable:
                 )
         return get_wrapped
     return get_outer
+
+
+def _check_role(role: str, user: User,) -> bool:
+    return role in user.roles
