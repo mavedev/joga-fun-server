@@ -49,21 +49,21 @@ def delete_post() -> Response:
     return Response(status=200 if result else 500)
 
 
-@api.route('/auth/admin', methods=['POST'])
-def administrate() -> Response:
+@api.route('/auth/login', methods=['POST'])
+def login() -> Response:
     body: AuthHeader = request.authorization or {
         'username': '',
         'password': ''
     }
-    admin_user: User = auth.get_user(
+    user: User = auth.get_user(
         body['username'],
         body['password']
     )
-    if not admin_user:
+    if not user:
         return make_response(
             'Could not verify.',
             HTTPStatus.UNAUTHORIZED,
             {'WWW-Authenticate': 'Basic realm="Login Required"'}
         )
     else:
-        return auth.get_token(admin_user.id)
+        return auth.get_token(user.id)
