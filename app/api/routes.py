@@ -1,7 +1,9 @@
-from flask import jsonify, request, Response
+from flask import jsonify, request, Response, make_response
 from flask_login import login_required
+from http import HTTPStatus
 
 from app.constants import JSONLike, AuthHeader
+from app.model import User
 
 from . import api
 from .logic import posts, auth
@@ -53,8 +55,15 @@ def administrate() -> Response:
         'username': '',
         'password': ''
     }
-    result: bool = auth.can_administrate(
+    admin_user: User = auth.get_user(
         body['username'],
         body['password']
     )
-    return Response(status=200 if result else 401)
+    if not admin_user:
+        return make_response(
+            'Could not verify.',
+            HTTPStatus.UNAUTHORIZED,
+            {'WWW-Authenticate': 'Basic realm="Login Required"'}
+        )
+    else:
+        return auth.get_token(admin_user.id)
