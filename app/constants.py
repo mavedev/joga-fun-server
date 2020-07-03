@@ -1,5 +1,5 @@
 from typing import Union, Dict, Any, AnyStr
-from werkzeug import Authorization
+from werkzeug.datastructures import Authorization
 
 # Numbers.
 _TEXT_LEN_MAX: int = 255
