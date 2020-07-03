@@ -1,7 +1,12 @@
 from typing import Callable
 
-from flask import jsonify, request, Response, make_response, current_app
-from flask_login import login_required
+from flask import (
+    make_response,
+    current_app,
+    Response,
+    request,
+    jsonify
+)
 from http import HTTPStatus
 
 from jwt.exceptions import DecodeError
@@ -46,8 +51,8 @@ def read_posts(how_many: int) -> str:
 
 
 @api.route('/posts/create', methods=['POST'])
-@login_required
-def create_post() -> Response:
+@token_required
+def create_post(current_user: User) -> Response:
     body: JSONLike = request.json
     result: bool = posts.create_post(
         title=body['title'],
@@ -57,8 +62,8 @@ def create_post() -> Response:
 
 
 @api.route('/posts/update', methods=['PUT'])
-@login_required
-def update_post() -> Response:
+@token_required
+def update_post(current_user: User) -> Response:
     body: JSONLike = request.json
     result: bool = posts.update_post(
         title=body['title'],
@@ -68,8 +73,8 @@ def update_post() -> Response:
 
 
 @api.route('/posts/delete', methods=['DELETE'])
-@login_required
-def delete_post() -> Response:
+@token_required
+def delete_post(current_user: User) -> Response:
     body: JSONLike = request.json
     result: bool = posts.delete_post(
         title=body['title']
