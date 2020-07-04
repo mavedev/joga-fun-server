@@ -1,11 +1,4 @@
-from flask import (
-    make_response,
-    Response,
-    request,
-    jsonify
-)
-
-from http import HTTPStatus
+from flask import Response, request, jsonify
 
 from app.constants import JSONLike, AuthHeader
 from app.model import User
@@ -14,6 +7,7 @@ from . import api
 from .services import posts, auth
 from .misc import (
     authorization_header_required,
+    bad_auth_response,
     token_required,
     response_from
 )
@@ -55,15 +49,8 @@ def delete_post(current_user: User) -> Response:
 @authorization_header_required
 def login() -> Response:
     body: AuthHeader = request.authorization or {}
-    user: User = auth.get_user(
-        body['username'],
-        body['password']
-    )
+    user: User = auth.get_user(body['username'], body['password'])
     if not user:
-        return make_response(
-            'Could not verify.',
-            HTTPStatus.UNAUTHORIZED,
-            {'WWW-Authenticate': 'Basic realm="Login Required"'}
-        )
+        return bad_auth_response('Could not verify user.')
     else:
         return auth.get_token(user.id)

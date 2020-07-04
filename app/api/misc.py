@@ -25,7 +25,7 @@ def authorization_header_required(wrapped_func: Callable) -> Callable:
     @wraps(wrapped_func)
     def get_wrapped(*args, **kwargs) -> Callable:
         if not request.authorization:
-            return _bad_auth_response('No auth info provided.')
+            return bad_auth_response('No auth info provided.')
         else:
             return wrapped_func(*args, **kwargs)
     return get_wrapped
@@ -41,11 +41,7 @@ def token_required(*, of: str) -> Callable:
         def get_wrapped(*args, **kwargs) -> Callable:
             token: bytes = b''
             if 'x-access-token' not in request.headers:
-                return make_response(
-                    'Need authorization',
-                    HTTPStatus.UNAUTHORIZED,
-                    {'WWW-Authenticate': 'Basic realm="Login Required"'}
-                )
+                return bad_auth_response('Need authorization')
             try:
                 token = request.headers['x-access-token']
                 data = decode(token, current_app.config['SECRET_KEY'])
@@ -53,17 +49,9 @@ def token_required(*, of: str) -> Callable:
                 if _check_role(of, current_user):
                     return wrapped_func(current_user, *args, **kwargs)
                 else:
-                    return make_response(
-                        'Permission denied',
-                        HTTPStatus.FORBIDDEN,
-                        {'WWW-Authenticate': 'Basic realm="Login Required"'}
-                    )
+                    return bad_auth_response('Permission denied')
             except DecodeError:
-                return make_response(
-                    'Bad token',
-                    HTTPStatus.BAD_REQUEST,
-                    {'WWW-Authenticate': 'Basic realm="Login Required"'}
-                )
+                return bad_auth_response('Bad token')
         return get_wrapped
     return get_outer
 
@@ -89,7 +77,13 @@ def response_from(
         return make_response('Failed.', when_failed)
 
 
-def _bad_auth_response(response_message: str) -> Response:
+def bad_auth_response(response_message: str) -> Response:
+    """Get 401 response with custom message provided.
+       Args:
+           response_message (str): custom message.
+       Returns:
+           The return value: generated Response object.
+    """
     return make_response(
         response_message,
         HTTPStatus.UNAUTHORIZED,
@@ -97,5 +91,6 @@ def _bad_auth_response(response_message: str) -> Response:
     )
 
 
-def _check_role(role: str, user: User,) -> bool:
+def _check_role(role: str, user: User) -> bool:
+    """Check if the given user has the given role."""
     return role in user.roles
