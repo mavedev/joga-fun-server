@@ -8,6 +8,7 @@ from app.constants import JSONLike
 
 
 def get_token(user_id: int) -> JSONLike:
+    """Get JSON web token for given user public id."""
     jwt_payload = {'user_id': user_id}
     jwt_secret = current_app.config['SECRET_KEY']
     jwt_alogithm = 'HS256'
@@ -16,5 +17,8 @@ def get_token(user_id: int) -> JSONLike:
 
 
 def get_user(username: str, password: str) -> Optional[User]:
+    """Get the user with given username if password is correct.
+       Otherwise return None.
+    """
     admin: User = User.query.filter(User.username == username).first()
     return admin if admin and admin.check_password(password) else None
