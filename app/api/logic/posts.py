@@ -20,7 +20,10 @@ def create_post(title: str, body: str) -> bool:
 
 def read_posts(how_many: int) -> List[Post]:
     """Retrieve n last posts from the DB."""
-    return db.session.query(Post).limit(how_many).all()
+    try:
+        return db.session.query(Post).limit(how_many).all()
+    except SQLAlchemyError:
+        return []
 
 
 def update_post(title: str, body: str) -> bool:
