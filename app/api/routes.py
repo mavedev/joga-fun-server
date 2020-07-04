@@ -31,7 +31,10 @@ def create_post(current_user: User) -> Response:
         title=body['title'],
         body=body['body']
     )
-    return Response(status=200 if result else 500)
+    if result:
+        return make_response('Success.', HTTPStatus.OK)
+    else:
+        return make_response('Failed.', HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
 @api.route('/posts/update', methods=['PUT'])
@@ -42,7 +45,10 @@ def update_post(current_user: User) -> Response:
         title=body['title'],
         body=body['body']
     )
-    return Response(status=200 if result else 500)
+    if result:
+        return make_response('Success.', HTTPStatus.OK)
+    else:
+        return make_response('Failed.', HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
 @api.route('/posts/delete', methods=['DELETE'])
