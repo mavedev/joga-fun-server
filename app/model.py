@@ -19,13 +19,13 @@ db = SQLAlchemy()
 
 roles_users = db.Table(
     'roles_users',
-    db.Column('user_id', db.Integer(), db.ForeignKey('users.id')),
-    db.Column('role_id', db.Integer(), db.ForeignKey('roles.id'))
+    db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+    db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
 )
 
 
 class Post(db.Model):  # type: ignore
-    __tablename__ = 'posts'
+    __tablename__ = 'post'
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.String(TEXT_LEN_MID))
     body = db.Column(db.Text)
@@ -44,16 +44,16 @@ class Post(db.Model):  # type: ignore
 
 
 class Comment(db.Model):  # type: ignore
-    __tablename__ = 'comments'
+    __tablename__ = 'comment'
     id = db.Column(db.Integer(), primary_key=True)
     author = db.Column(db.String(TEXT_LEN_MID), nullable=False)
     email = db.Column(db.String(TEXT_LEN_MAX), nullable=False)
     site = db.Column(db.String(TEXT_LEN_MAX))
-    post_id = db.Column(db.Integer(), db.ForeignKey('posts.id'))
+    post_id = db.Column(db.Integer(), db.ForeignKey('post.id'))
 
 
 class Role(db.Model, RoleMixin):  # type: ignore
-    __tablename__ = 'roles'
+    __tablename__ = 'role'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(TEXT_LEN_MIN), unique=True)
     description = db.Column(db.String(TEXT_LEN_MAX))
@@ -63,7 +63,7 @@ class Role(db.Model, RoleMixin):  # type: ignore
 
 
 class User(db.Model, UserMixin):  # type: ignore
-    __tablename__ = 'users'
+    __tablename__ = 'user'
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(TEXT_LEN_MIN), nullable=False, unique=True)
     password_hash = db.Column(
@@ -81,7 +81,7 @@ class User(db.Model, UserMixin):  # type: ignore
     roles = db.relationship(
         'Role',
         secondary=roles_users,
-        backref=db.backref('users', lazy='dynamic')
+        backref=db.backref('user', lazy='dynamic')
     )
 
     def set_password(self, password) -> None:
