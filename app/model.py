@@ -30,6 +30,7 @@ class Post(db.Model):  # type: ignore
     title = db.Column(db.String(TEXT_LEN_MID))
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now)
+    comments = db.relationship('Comment', backref='post')
 
     def __repr__(self) -> str:
         return '<Post {}>'.format(self.title)
@@ -48,6 +49,7 @@ class Comment(db.Model):  # type: ignore
     author = db.Column(db.String(TEXT_LEN_MID), nullable=False)
     email = db.Column(db.String(TEXT_LEN_MAX), nullable=False)
     site = db.Column(db.String(TEXT_LEN_MAX))
+    post_id = db.Column(db.Integer(), db.ForeignKey('posts.id'))
 
 
 class Role(db.Model, RoleMixin):  # type: ignore
