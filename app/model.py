@@ -9,9 +9,9 @@ from werkzeug.security import (
 )
 
 from .constants import (
-    _TEXT_LEN_MAX,
-    _TEXT_LEN_MID,
-    _TEXT_LEN_MIN
+    TEXT_LEN_MAX,
+    TEXT_LEN_MID,
+    TEXT_LEN_MIN
 )
 
 db = SQLAlchemy()
@@ -27,7 +27,7 @@ roles_users = db.Table(
 class Post(db.Model):  # type: ignore
     __tablename__ = 'posts'
     id = db.Column(db.Integer(), primary_key=True)
-    title = db.Column(db.String(_TEXT_LEN_MID))
+    title = db.Column(db.String(TEXT_LEN_MID))
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now)
 
@@ -45,16 +45,16 @@ class Post(db.Model):  # type: ignore
 class Comment(db.Model):  # type: ignore
     __tablename__ = 'comments'
     id = db.Column(db.Integer(), primary_key=True)
-    author = db.Column(db.String(_TEXT_LEN_MID), nullable=False)
-    email = db.Column(db.String(_TEXT_LEN_MAX), nullable=False)
-    site = db.Column(db.String(_TEXT_LEN_MAX))
+    author = db.Column(db.String(TEXT_LEN_MID), nullable=False)
+    email = db.Column(db.String(TEXT_LEN_MAX), nullable=False)
+    site = db.Column(db.String(TEXT_LEN_MAX))
 
 
 class Role(db.Model, RoleMixin):  # type: ignore
     __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(_TEXT_LEN_MIN), unique=True)
-    description = db.Column(db.String(_TEXT_LEN_MAX))
+    name = db.Column(db.String(TEXT_LEN_MIN), unique=True)
+    description = db.Column(db.String(TEXT_LEN_MAX))
 
     def __repr__(self) -> str:
         return '<Role {}>'.format(self.name)
@@ -63,9 +63,9 @@ class Role(db.Model, RoleMixin):  # type: ignore
 class User(db.Model, UserMixin):  # type: ignore
     __tablename__ = 'users'
     id = db.Column(db.Integer(), primary_key=True)
-    username = db.Column(db.String(_TEXT_LEN_MIN), nullable=False, unique=True)
+    username = db.Column(db.String(TEXT_LEN_MIN), nullable=False, unique=True)
     password_hash = db.Column(
-        db.String(_TEXT_LEN_MID),
+        db.String(TEXT_LEN_MID),
         nullable=False,
         default=''
     )
