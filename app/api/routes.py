@@ -11,7 +11,7 @@ from app.constants import JSONLike, AuthHeader
 from app.model import User
 
 from . import api
-from .logic import posts, auth
+from .services import posts, auth
 from .misc import token_required, response_from
 
 
