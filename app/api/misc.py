@@ -16,8 +16,23 @@ from jwt import decode
 from app.model import User
 
 
+def authorization_header_required(wrapped_func: Callable) -> Callable:
+    """A decorator requiring authorization information included.
+       If the authoriztion info is not provided
+       returns corresponding response otherwise
+       returns the result of the wrapped function.
+    """
+    @wraps(wrapped_func)
+    def get_wrapped(*args, **kwargs) -> Callable:
+        if not request.authorization:
+            return _bad_auth_response('No auth info provided.')
+        else:
+            return wrapped_func(*args, **kwargs)
+    return get_wrapped
+
+
 def token_required(*, of: str) -> Callable:
-    """A decorator requiering the JSON access token.
+    """A decorator requiring the JSON access token.
        Args:
            of (str): of which role the token must be.
     """
@@ -53,10 +68,6 @@ def token_required(*, of: str) -> Callable:
     return get_outer
 
 
-def _check_role(role: str, user: User,) -> bool:
-    return role in user.roles
-
-
 def response_from(
     result: bool,
     when_ok: HTTPStatus = HTTPStatus.OK,
@@ -76,3 +87,15 @@ def response_from(
         return make_response('Success.', when_ok)
     else:
         return make_response('Failed.', when_failed)
+
+
+def _bad_auth_response(response_message: str) -> Response:
+    return make_response(
+        response_message,
+        HTTPStatus.UNAUTHORIZED,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )
+
+
+def _check_role(role: str, user: User,) -> bool:
+    return role in user.roles

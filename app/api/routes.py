@@ -12,7 +12,11 @@ from app.model import User
 
 from . import api
 from .services import posts, auth
-from .misc import token_required, response_from
+from .misc import (
+    authorization_header_required,
+    token_required,
+    response_from
+)
 
 
 @api.route('/posts/<int:how_many>', methods=['GET'])
@@ -48,11 +52,9 @@ def delete_post(current_user: User) -> Response:
 
 
 @api.route('/auth/login', methods=['POST'])
+@authorization_header_required
 def login() -> Response:
-    body: AuthHeader = request.authorization or {
-        'username': '',
-        'password': ''
-    }
+    body: AuthHeader = request.authorization or {}
     user: User = auth.get_user(
         body['username'],
         body['password']
