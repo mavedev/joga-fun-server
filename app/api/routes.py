@@ -25,7 +25,11 @@ def read_posts(how_many: int) -> str:
 @token_required(of='admin')
 def create_post(current_user: User) -> Response:
     body: JSONLike = request.json
-    result = posts.create_post(title=body['title'], body=body['body'])
+    result = posts.create_post(
+        title=body['title'],
+        body=body['body'],
+        category_name=body['category_name']
+    )
     return response_from(result)
 
 
