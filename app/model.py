@@ -19,14 +19,14 @@ db = SQLAlchemy()
 
 roles_users = db.Table(
     'roles_users',
-    db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-    db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('role_id', db.Integer, db.ForeignKey('role.id'))
 )
 
 
 class Category(db.Model):  # type: ignore
     __tablename__ = 'category'
-    id = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(TEXT_LEN_MID), nullable=False, unique=True)
     posts = db.relationship('Post', backref='category')
 
@@ -41,12 +41,12 @@ class Category(db.Model):  # type: ignore
 
 class Post(db.Model):  # type: ignore
     __tablename__ = 'post'
-    id = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(TEXT_LEN_MID))
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now)
     comments = db.relationship('Comment', backref='post')
-    category_id = db.Column(db.Integer(), db.ForeignKey('category.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
 
     def __repr__(self) -> str:
         return '<Post {}>'.format(self.title)
@@ -61,12 +61,12 @@ class Post(db.Model):  # type: ignore
 
 class Comment(db.Model):  # type: ignore
     __tablename__ = 'comment'
-    id = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     author = db.Column(db.String(TEXT_LEN_MID), nullable=False)
     email = db.Column(db.String(TEXT_LEN_MAX), nullable=False)
     site = db.Column(db.String(TEXT_LEN_MAX))
     body = db.Column(db.Text)
-    post_id = db.Column(db.Integer(), db.ForeignKey('post.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
 
     def __repr__(self) -> str:
         return '<Comment of {}>'.format(self.author)
@@ -82,7 +82,7 @@ class Comment(db.Model):  # type: ignore
 
 class Role(db.Model, RoleMixin):  # type: ignore
     __tablename__ = 'role'
-    id = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(TEXT_LEN_MIN), unique=True)
     description = db.Column(db.String(TEXT_LEN_MAX))
 
@@ -97,17 +97,17 @@ class Role(db.Model, RoleMixin):  # type: ignore
 
 class User(db.Model, UserMixin):  # type: ignore
     __tablename__ = 'user'
-    id = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(TEXT_LEN_MIN), nullable=False, unique=True)
     password_hash = db.Column(
         db.String(TEXT_LEN_MID),
         nullable=False,
         default=''
     )
-    active = db.Column(db.Boolean())
-    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    active = db.Column(db.Boolean)
+    created_on = db.Column(db.DateTime, default=datetime.utcnow)
     updated_on = db.Column(
-        db.DateTime(),
+        db.DateTime,
         default=datetime.utcnow,
         onupdate=datetime.utcnow
     )
