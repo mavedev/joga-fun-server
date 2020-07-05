@@ -2,16 +2,18 @@ from typing import List
 
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.model import db, Post
+from app.model import db, Category, Post
 
 
-def create_post(title: str, body: str) -> bool:
-    """Try to create a post in the DB with the given title and body.
+def create_post(title: str, body: str, category_name: str) -> bool:
+    """Try to create a post in the DB with the given title and body
+       and then connect it to the category with the given name.
        Returns:
            The return value. True for success, False otherwise.
     """
     try:
-        db.session.add(Post(title=title, body=body))
+        category = Category.query.first(Category.name == category_name)
+        db.session.add(Post(title=title, body=body, category=category))
         db.session.commit()
         return True
     except SQLAlchemyError:
