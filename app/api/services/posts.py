@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.model import db, Category, Post
 
 
-def create_post(title: str, body: str, category_name: str) -> bool:
+def create_post(title: str, body: str, image: str, category_name: str) -> bool:
     """Try to create a post in the DB with the given title and body
        and then connect it to the category with the given name.
        Returns:
@@ -15,7 +15,12 @@ def create_post(title: str, body: str, category_name: str) -> bool:
         category = Category.query.filter(
             Category.name == category_name
         ).first()
-        db.session.add(Post(title=title, body=body, category=category))
+        db.session.add(Post(
+            title=title,
+            body=body,
+            image_url=image,
+            category=category
+        ))
         db.session.commit()
         return True
     except SQLAlchemyError:
@@ -30,7 +35,7 @@ def read_posts(how_many: int) -> List[Post]:
         return []
 
 
-def update_post(title: str, body: str) -> bool:
+def update_post(title: str, body: str, image: str) -> bool:
     """Try to update the body for the post with the given title.
        Returns:
            The return value. True for success, False otherwise.
@@ -46,6 +51,7 @@ def update_post(title: str, body: str) -> bool:
     else:
         try:
             target_post.body = body
+            target_post.image_url = image
             db.session.commit()
             return True
         except SQLAlchemyError:

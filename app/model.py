@@ -43,6 +43,7 @@ class Post(db.Model):  # type: ignore
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(TEXT_LEN_MID))
+    image_url = db.Column(db.Text)
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now)
     comments = db.relationship('Comment', backref='post')
@@ -55,6 +56,7 @@ class Post(db.Model):  # type: ignore
         return {
             'title': self.title,
             'body': self.body,
+            'image_url': self.image_url,
             'created': self.created
         }
 
