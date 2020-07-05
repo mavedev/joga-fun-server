@@ -1,4 +1,3 @@
-from typing import Dict, Any
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
@@ -52,7 +51,7 @@ class Post(db.Model):  # type: ignore
     def __repr__(self) -> str:
         return '<Post {}>'.format(self.title)
 
-    def to_json(self) -> Dict[str, Any]:
+    def to_json(self) -> JSONLike:
         return {
             'title': self.title,
             'body': self.body,
@@ -68,6 +67,16 @@ class Comment(db.Model):  # type: ignore
     site = db.Column(db.String(TEXT_LEN_MAX))
     post_id = db.Column(db.Integer(), db.ForeignKey('post.id'))
 
+    def __repr__(self) -> str:
+        return '<Comment of {}>'.format(self.author)
+
+    def to_json(self) -> JSONLike:
+        return {
+            'author': self.author,
+            'email': self.email,
+            'site': self.site
+        }
+
 
 class Role(db.Model, RoleMixin):  # type: ignore
     __tablename__ = 'role'
@@ -77,6 +86,11 @@ class Role(db.Model, RoleMixin):  # type: ignore
 
     def __repr__(self) -> str:
         return '<Role {}>'.format(self.name)
+
+    def to_json(self) -> JSONLike:
+        return {
+            'name': self.name
+        }
 
 
 class User(db.Model, UserMixin):  # type: ignore
