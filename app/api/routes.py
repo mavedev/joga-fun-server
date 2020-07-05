@@ -25,11 +25,7 @@ def read_posts(how_many: int) -> str:
 @token_required(of='admin')
 def create_post(current_user: User) -> Response:
     body: JSONLike = request.json
-    result = posts.create_post(
-        title=body['title'],
-        body=body['body'],
-        category_name=body['category_name']
-    )
+    result = posts.create_post(body['title'], body['body'], body['category'])
     return response_from(result)
 
 
@@ -37,7 +33,7 @@ def create_post(current_user: User) -> Response:
 @token_required(of='admin')
 def update_post(current_user: User) -> Response:
     body: JSONLike = request.json
-    result = posts.update_post(title=body['title'], body=body['body'])
+    result = posts.update_post(body['title'], body['body'])
     return response_from(result)
 
 
@@ -45,7 +41,7 @@ def update_post(current_user: User) -> Response:
 @token_required(of='admin')
 def delete_post(current_user: User) -> Response:
     body: JSONLike = request.json
-    result = posts.delete_post(title=body['title'])
+    result = posts.delete_post(body['title'])
     return response_from(result)
 
 
