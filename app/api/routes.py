@@ -4,13 +4,21 @@ from app.constants import JSONLike, AuthHeader
 from app.model import User
 
 from . import api
-from .services import posts, auth
+from .services import categories, posts, auth
 from .misc import (
     authorization_header_required,
     bad_auth_response,
     token_required,
     response_from
 )
+
+
+@api.route('/categories/<int:how_many>', methods=['GET'])
+def read_categories(how_many: int) -> str:
+    return jsonify(results=[
+        categorie.to_json() for categorie in
+        categories.read_categories(how_many)
+    ])
 
 
 @api.route('/posts/<int:how_many>', methods=['GET'])
