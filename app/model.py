@@ -65,6 +65,7 @@ class Comment(db.Model):  # type: ignore
     author = db.Column(db.String(TEXT_LEN_MID), nullable=False)
     email = db.Column(db.String(TEXT_LEN_MAX), nullable=False)
     site = db.Column(db.String(TEXT_LEN_MAX))
+    body = db.Column(db.Text)
     post_id = db.Column(db.Integer(), db.ForeignKey('post.id'))
 
     def __repr__(self) -> str:
@@ -74,7 +75,8 @@ class Comment(db.Model):  # type: ignore
         return {
             'author': self.author,
             'email': self.email,
-            'site': self.site
+            'site': self.site,
+            'body': self.body
         }
 
 
