@@ -21,6 +21,14 @@ def read_categories(how_many: int) -> str:
     ])
 
 
+@api.route('/categories/create', methods=['POST'])
+@token_required(of='admin')
+def create_category(current_user: User) -> Response:
+    body: JSONLike = request.json
+    result = categories.create_category(body['name'])
+    return response_from(result)
+
+
 @api.route('/posts/<int:how_many>', methods=['GET'])
 def read_posts(how_many: int) -> str:
     return jsonify(results=[
