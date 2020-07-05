@@ -12,7 +12,9 @@ def create_post(title: str, body: str, category_name: str) -> bool:
            The return value. True for success, False otherwise.
     """
     try:
-        category = Category.query.first(Category.name == category_name)
+        category = Category.query.filter(
+            Category.name == category_name
+        ).first()
         db.session.add(Post(title=title, body=body, category=category))
         db.session.commit()
         return True
