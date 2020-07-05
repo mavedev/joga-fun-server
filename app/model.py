@@ -9,6 +9,7 @@ from werkzeug.security import (
 )
 
 from .constants import (
+    JSONLike,
     TEXT_LEN_MAX,
     TEXT_LEN_MID,
     TEXT_LEN_MIN
@@ -24,6 +25,21 @@ roles_users = db.Table(
 )
 
 
+class Category(db.Model):  # type: ignore
+    __tablename__ = 'category'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(TEXT_LEN_MID), nullable=False, unique=True)
+    posts = db.relationship('Post', backref='category')
+
+    def __repr__(self) -> str:
+        return '<Category {}>'.format(self.name)
+
+    def to_json(self) -> JSONLike:
+        return {
+            'name': self.name
+        }
+
+
 class Post(db.Model):  # type: ignore
     __tablename__ = 'post'
     id = db.Column(db.Integer(), primary_key=True)
@@ -31,6 +47,7 @@ class Post(db.Model):  # type: ignore
     body = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now)
     comments = db.relationship('Comment', backref='post')
+    category_id = db.Column(db.Integer(), db.ForeignKey('category.id'))
 
     def __repr__(self) -> str:
         return '<Post {}>'.format(self.title)
