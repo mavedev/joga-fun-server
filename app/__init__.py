@@ -14,6 +14,9 @@ def create_app(config_name: str) -> Flask:
     from .model import db
     db.init_app(app)
 
+    from flask_cors import CORS
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
+
     from .api import api
     app.register_blueprint(api, url_prefix='/api/v1.0')
 
