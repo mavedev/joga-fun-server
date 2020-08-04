@@ -81,3 +81,7 @@ def delete_post(title: str) -> bool:
             return True
         except SQLAlchemyError:
             return False
+
+
+def get_posts_quantity() -> int:
+    return db.session.query(Post).count()

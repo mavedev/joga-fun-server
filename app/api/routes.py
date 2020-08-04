@@ -40,6 +40,11 @@ def read_posts(chunk: int) -> str:
     ])
 
 
+@api.route('/posts/quantity', methods=['GET'])
+def get_posts_quantity() -> str:
+    return jsonify(result=posts.get_posts_quantity())
+
+
 @api.route('/posts/create', methods=['POST'])
 @token_required(of='admin')
 def create_post(current_user: User) -> Response:
