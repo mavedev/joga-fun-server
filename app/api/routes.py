@@ -61,7 +61,7 @@ def delete_post(current_user: User) -> Response:
     return response_from(result)
 
 
-@api.route('/auth/login', methods=['POST'])
+@api.route('/login', methods=['POST'])
 @authorization_header_required
 def login() -> Response:
     body: AuthHeader = request.authorization or {}
