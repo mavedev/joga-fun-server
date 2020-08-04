@@ -13,11 +13,11 @@ from .misc import (
 )
 
 
-@api.route('/categories/<int:how_many>', methods=['GET'])
-def read_categories(how_many: int) -> str:
+@api.route('/categories', methods=['GET'])
+def read_categories() -> str:
     return jsonify(results=[
         categorie.to_json() for categorie in
-        categories.read_categories(how_many)
+        categories.read_categories()
     ])
 
 

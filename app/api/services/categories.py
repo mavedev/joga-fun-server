@@ -18,9 +18,9 @@ def create_category(name: str) -> bool:
         return False
 
 
-def read_categories(how_many: int) -> List[Category]:
+def read_categories() -> List[Category]:
     """Retrieve n last categories from the DB."""
     try:
-        return db.session.query(Category).limit(how_many).all()
+        return db.session.query(Category).all()
     except SQLAlchemyError:
         return []
