@@ -2,6 +2,7 @@ from typing import List
 
 from sqlalchemy.exc import SQLAlchemyError
 
+import app.constants as constants
 from app.model import db, Category, Post
 
 
@@ -27,10 +28,12 @@ def create_post(title: str, body: str, image: str, category_name: str) -> bool:
         return False
 
 
-def read_posts(how_many: int) -> List[Post]:
+def read_posts(chunk: int) -> List[Post]:
     """Retrieve n last posts from the DB."""
     try:
-        return db.session.query(Post).limit(how_many).all()
+        index_from = constants.POSTS_CHUNK_SIZE * (chunk - 1)
+        index_to = constants.POSTS_CHUNK_SIZE * chunk
+        return db.session.query(Post).all()[index_from:index_to]
     except SQLAlchemyError:
         return []
 

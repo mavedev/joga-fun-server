@@ -29,11 +29,14 @@ def create_category(current_user: User) -> Response:
     return response_from(result)
 
 
-@api.route('/posts/<int:how_many>', methods=['GET'])
-def read_posts(how_many: int) -> str:
+@api.route('/posts/<int:chunk>', methods=['GET'])
+def read_posts(chunk: int) -> str:
+    """ Posts are split by five-post chunks.
+        Chunk argument is the chunk that must be returned.
+        """
     return jsonify(results=[
         post.to_json() for post in
-        posts.read_posts(how_many)
+        posts.read_posts(chunk)
     ])
 
 
@@ -41,7 +44,12 @@ def read_posts(how_many: int) -> str:
 @token_required(of='admin')
 def create_post(current_user: User) -> Response:
     body: JSONLike = request.json
-    result = posts.create_post(body['title'], body['body'], body['category'])
+    result = posts.create_post(
+        body['title'],
+        body['body'],
+        body['imageURL'],
+        body['category']
+    )
     return response_from(result)
 
 
