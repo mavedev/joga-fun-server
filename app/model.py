@@ -57,7 +57,8 @@ class Post(db.Model):  # type: ignore
             'title': self.title,
             'body': self.body,
             'image_url': self.image_url,
-            'created': self.created
+            'created': self.created,
+            'category': self.category.name
         }
 
 
