@@ -31,12 +31,22 @@ def create_category(current_user: User) -> Response:
 
 @api.route('/posts/<int:chunk>', methods=['GET'])
 def read_posts(chunk: int) -> str:
-    """ Posts are split by five-post chunks.
-        Chunk argument is the chunk that must be returned.
-        """
+    """Posts are split by five-post chunks.
+       Chunk argument is the chunk that must be returned.
+    """
     return jsonify(results=[
         post.to_json() for post in
         posts.read_posts(chunk)
+    ])
+
+
+@api.route('/posts/filtered/<string:category>/<int:chunk>', methods=['GET'])
+def read_posts_filtered(category: str, chunk: int) -> str:
+    """Get posts chunk of a category given."""
+    return jsonify(results=[
+        post.to_json() for post in
+        posts.read_posts(chunk)
+        if post.category.name == category
     ])
 
 
