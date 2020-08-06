@@ -31,7 +31,7 @@ def create_post(title: str, body: str, image: str, category_name: str) -> bool:
 def read_posts_unfiltered(chunk: int) -> List[Post]:
     """Retrieve posts of a chunk provided from the DB."""
     try:
-        results = db.session.query(Post).all()
+        results = _get_sorted(db.session.query(Post).all())
         return _retrieve_chunk(chunk, results)
     except SQLAlchemyError:
         return []
@@ -42,7 +42,7 @@ def read_posts_filtered(chunk: int, category: str) -> List[Post]:
        filtered by a category provided.
        """
     try:
-        results = db.session.query(Post).all()
+        results = _get_sorted(db.session.query(Post).all())
         filtered_results = [
             post for post in results
             if post.category.name == category
@@ -56,6 +56,10 @@ def _retrieve_chunk(chunk: int, posts: List[Post]) -> List[Post]:
     index_from = POSTS_CHUNK_SIZE * (chunk - 1)
     index_to = POSTS_CHUNK_SIZE * chunk
     return posts[index_from:index_to]
+
+
+def _get_sorted(posts: List[Post]) -> List[Post]:
+    return sorted(posts, key=lambda x: x.created)
 
 
 def update_post(title: str, body: str, image: str) -> bool:
