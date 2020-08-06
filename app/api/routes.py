@@ -1,6 +1,6 @@
 from flask import Response, request, jsonify
 
-from app.constants import JSONLike, AuthHeader, POSTS_CHUNK_SIZE
+from app.constants import JSONLike, AuthHeader
 from app.model import User
 
 from . import api
@@ -29,29 +29,14 @@ def create_category(current_user: User) -> Response:
     return response_from(result)
 
 
-@api.route('/posts/<int:chunk>', methods=['GET'])
-def read_posts(chunk: int) -> str:
-    """Posts are split by five-post chunks.
-       Chunk argument is the chunk that must be returned.
-    """
-    index_from = POSTS_CHUNK_SIZE * (chunk - 1)
-    index_to = POSTS_CHUNK_SIZE * chunk
-    return jsonify(results=[
-        post.to_json() for post in
-        posts.read_posts(chunk)[index_from:index_to]
-    ])
-
-
-@api.route('/posts/filtered/<string:category>/<int:chunk>', methods=['GET'])
-def read_posts_filtered(category: str, chunk: int) -> str:
+@api.route('/posts/<string:category>/<int:chunk>', methods=['GET'])
+def read_posts(category: str, chunk: int) -> str:
     """Get posts chunk of a category given."""
-    index_from = POSTS_CHUNK_SIZE * (chunk - 1)
-    index_to = POSTS_CHUNK_SIZE * chunk
-    return jsonify(results=[
-        post.to_json() for post in
-        posts.read_posts(chunk)
-        if post.category.name == category
-    ][index_from:index_to])
+    if category == 'all':
+        results = posts.read_posts_unfiltered(chunk)
+    else:
+        results = posts.read_posts_filtered(chunk, category)
+    return jsonify(results=[post.to_json() for post in results])
 
 
 @api.route('/posts/quantity', methods=['GET'])

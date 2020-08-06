@@ -2,6 +2,7 @@ from typing import List
 
 from sqlalchemy.exc import SQLAlchemyError
 
+from app.constants import POSTS_CHUNK_SIZE
 from app.model import db, Category, Post
 
 
@@ -27,12 +28,34 @@ def create_post(title: str, body: str, image: str, category_name: str) -> bool:
         return False
 
 
-def read_posts(chunk: int) -> List[Post]:
-    """Retrieve n last posts from the DB."""
+def read_posts_unfiltered(chunk: int) -> List[Post]:
+    """Retrieve posts of a chunk provided from the DB."""
     try:
-        return db.session.query(Post).all()
+        results = db.session.query(Post).all()
+        return _retrieve_chunk(chunk, results)
     except SQLAlchemyError:
         return []
+
+
+def read_posts_filtered(chunk: int, category: str) -> List[Post]:
+    """Retrieve posts of a chunk provided from the DB
+       filtered by a category provided.
+       """
+    try:
+        results = db.session.query(Post).all()
+        filtered_results = [
+            post for post in results
+            if post.category.name == category
+        ]
+        return _retrieve_chunk(chunk, filtered_results)
+    except SQLAlchemyError:
+        return []
+
+
+def _retrieve_chunk(chunk: int, posts: List[Post]) -> List[Post]:
+    index_from = POSTS_CHUNK_SIZE * (chunk - 1)
+    index_to = POSTS_CHUNK_SIZE * chunk
+    return posts[index_from:index_to]
 
 
 def update_post(title: str, body: str, image: str) -> bool:
