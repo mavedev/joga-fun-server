@@ -38,7 +38,7 @@ def read_posts(category: str, chunk: int) -> str:
         result = posts.read_posts_filtered(chunk, category)
     return jsonify(
         total=result.total,
-        results=[post.to_json() for post in result.posts]
+        posts=[post.to_json() for post in result.posts]
     )
 
 
