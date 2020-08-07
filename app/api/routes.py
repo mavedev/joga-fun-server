@@ -33,15 +33,13 @@ def create_category(current_user: User) -> Response:
 def read_posts(category: str, chunk: int) -> str:
     """Get posts chunk of a category given."""
     if category == 'all':
-        results = posts.read_posts_unfiltered(chunk)
+        result = posts.read_posts_unfiltered(chunk)
     else:
-        results = posts.read_posts_filtered(chunk, category)
-    return jsonify(results=[post.to_json() for post in results])
-
-
-@api.route('/posts/quantity', methods=['GET'])
-def get_posts_quantity() -> str:
-    return jsonify(result=posts.get_posts_quantity())
+        result = posts.read_posts_filtered(chunk, category)
+    return jsonify(
+        total=result.total,
+        results=[post.to_json() for post in result.posts]
+    )
 
 
 @api.route('/posts/create', methods=['POST'])

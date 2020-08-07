@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.constants import POSTS_CHUNK_SIZE
 from app.model import db, Category, Post
+from app.api.types import PostChunkDTO
 
 
 def create_post(title: str, body: str, image: str, category_name: str) -> bool:
@@ -28,16 +29,17 @@ def create_post(title: str, body: str, image: str, category_name: str) -> bool:
         return False
 
 
-def read_posts_unfiltered(chunk: int) -> List[Post]:
+def read_posts_unfiltered(chunk: int) -> PostChunkDTO:
     """Retrieve posts of a chunk provided from the DB."""
     try:
         results = _get_sorted(db.session.query(Post).all())
-        return _retrieve_chunk(chunk, results)
+        results_chunk = _retrieve_chunk(chunk, results)
+        return PostChunkDTO(len(results), results_chunk)
     except SQLAlchemyError:
-        return []
+        return PostChunkDTO(0, [])
 
 
-def read_posts_filtered(chunk: int, category: str) -> List[Post]:
+def read_posts_filtered(chunk: int, category: str) -> PostChunkDTO:
     """Retrieve posts of a chunk provided from the DB
        filtered by a category provided.
        """
@@ -47,9 +49,10 @@ def read_posts_filtered(chunk: int, category: str) -> List[Post]:
             post for post in results
             if post.category.name == category
         ]
-        return _retrieve_chunk(chunk, filtered_results)
+        results_chunk = _retrieve_chunk(chunk, filtered_results)
+        return PostChunkDTO(len(filtered_results), results_chunk)
     except SQLAlchemyError:
-        return []
+        return PostChunkDTO(0, [])
 
 
 def _retrieve_chunk(chunk: int, posts: List[Post]) -> List[Post]:
@@ -105,7 +108,3 @@ def delete_post(title: str) -> bool:
             return True
         except SQLAlchemyError:
             return False
-
-
-def get_posts_quantity() -> int:
-    return db.session.query(Post).count()
