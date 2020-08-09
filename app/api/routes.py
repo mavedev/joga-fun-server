@@ -43,7 +43,7 @@ def read_posts(category: str, chunk: int) -> str:
     )
 
 
-@api.route('/post/<int:postID>', methods=['GET'])
+@api.route('/post/<int:post_id>', methods=['GET'])
 def read_post(post_id: int) -> str:
     post_found = posts.read_post(post_id)
     if not post_found:
