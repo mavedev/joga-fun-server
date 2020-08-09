@@ -54,6 +54,7 @@ class Post(db.Model):  # type: ignore
 
     def to_json(self) -> JSONLike:
         return {
+            'id': self.id,
             'title': self.title,
             'body': self.body,
             'imageURL': self.image_url,
