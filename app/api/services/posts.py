@@ -1,4 +1,5 @@
 from typing import List
+from math import ceil
 
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -34,7 +35,8 @@ def read_posts_unfiltered(chunk: int) -> PostChunkDTO:
     try:
         results = _get_sorted(db.session.query(Post).all())
         results_chunk = _retrieve_chunk(chunk, results)
-        return PostChunkDTO(len(results), results_chunk)
+        chunks_left = _get_chunks_left(chunk, len(results))
+        return PostChunkDTO(chunks_left, results_chunk)
     except SQLAlchemyError:
         return PostChunkDTO(0, [])
 
@@ -50,9 +52,14 @@ def read_posts_filtered(chunk: int, category: str) -> PostChunkDTO:
             if post.category.name == category
         ]
         results_chunk = _retrieve_chunk(chunk, filtered_results)
-        return PostChunkDTO(len(filtered_results), results_chunk)
+        chunks_left = _get_chunks_left(chunk, len(filtered_results))
+        return PostChunkDTO(chunks_left, results_chunk)
     except SQLAlchemyError:
         return PostChunkDTO(0, [])
+
+
+def read_post(post_id: int) -> Post:
+    return Post.query.filter(Post.id == post_id).first()
 
 
 def _retrieve_chunk(chunk: int, posts: List[Post]) -> List[Post]:
@@ -63,6 +70,10 @@ def _retrieve_chunk(chunk: int, posts: List[Post]) -> List[Post]:
 
 def _get_sorted(posts: List[Post]) -> List[Post]:
     return sorted(posts, key=lambda x: x.created)
+
+
+def _get_chunks_left(chunk: int, total_posts: int) -> int:
+    return ceil((total_posts - chunk * POSTS_CHUNK_SIZE) / POSTS_CHUNK_SIZE)
 
 
 def update_post(title: str, body: str, image: str) -> bool:

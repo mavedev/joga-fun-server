@@ -1,4 +1,5 @@
-from flask import Response, request, jsonify
+from flask import Response, request, jsonify, make_response
+from http import HTTPStatus
 
 from app.constants import JSONLike, AuthHeader
 from app.model import User
@@ -37,9 +38,20 @@ def read_posts(category: str, chunk: int) -> str:
     else:
         result = posts.read_posts_filtered(chunk, category)
     return jsonify(
-        total=result.total,
+        chunksLeft=result.chunks_left,
         posts=[post.to_json() for post in result.posts]
     )
+
+
+@api.route('/post/<int:postID>', methods=['GET'])
+def read_post(post_id: int) -> str:
+    post_found = posts.read_post(post_id)
+    if not post_found:
+        return make_response(
+            'No post with the ID provided.',
+            HTTPStatus.NO_CONTENT
+        )
+    return jsonify(post=post_found.to_json())
 
 
 @api.route('/posts/create', methods=['POST'])
