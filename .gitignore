@@ -133,3 +133,6 @@ dmypy.json
 
 # Templates
 templates/
+
+# uWSGI
+wsgi.ini
