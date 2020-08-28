@@ -59,7 +59,7 @@ class Post(db.Model):  # type: ignore
             'body': self.body,
             'imageURL': self.image_url,
             'created': self.created,
-            'category': self.category.name
+            'category': self.category.name if self.category else ''
         }
 
 
